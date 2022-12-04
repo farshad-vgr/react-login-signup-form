@@ -47,6 +47,13 @@ function loginReducer(state, { type, fieldName, payload }) {
         password: "",
       };
     }
+    case "clearInputs": {
+      return {
+        ...state,
+        username: "",
+        password: "",
+      };
+    }
     default:
       throw new Error("Error in reducer case: " + type);
   }
@@ -59,12 +66,16 @@ function App() {
   const passwordRefLogin = useRef();
   const userNameRefSignin = useRef();
   const passwordRefSignin = useRef();
-  const [ display, setDisplay ] = useState({ loginDisplay: "block", signinDisplay: "none" });
+  const passwordInputLogin = useRef();
+  const eyeBtnLogin = useRef();
+  const passwordInputSignin = useRef();
+  const eyeBtnSignin = useRef();
+  const [display, setDisplay] = useState({ loginDisplay: "block", signinDisplay: "none" });
   const { loginDisplay, signinDisplay } = display;
   const [state, dispatch] = useReducer(loginReducer, initialState);
   const { username, password, isLoading, error, isLoggedIn } = state;
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
 
     dispatch({ type: "login" });
@@ -88,7 +99,7 @@ function App() {
     }, 1000);
   };
 
-  const onRegister = async (e) => {
+  const onRegister = (e) => {
     e.preventDefault();
 
     dispatch({ type: "login" });
@@ -107,6 +118,16 @@ function App() {
         passwordRefSignin.current.innerText = "";
       }
     }, 1000);
+  };
+
+  const showPasswordHandler = (input, button) => {
+    if (input.current.type === "password") {
+      input.current.type = "text";
+      button.current.classList.add("hide");
+    } else {
+      input.current.type = "password";
+      button.current.classList.remove("hide");
+    }
   };
 
   return (
@@ -128,37 +149,55 @@ function App() {
           <form className="form" onSubmit={onSubmit}>
             <h1>Login form:</h1>
             <section>
-              <input
-                type="text"
-                placeholder="Name"
-                minLength={3}
-                maxLength={15}
-                value={username}
-                onChange={(e) =>
-                  dispatch({
-                    type: "field",
-                    fieldName: "username",
-                    payload: e.currentTarget.value,
-                  })
-                }
-              />
+              <div className="content">
+                <div className="pencil">
+                  <div className="fa fa-pencil-alt flip"></div>
+                </div>
+
+                <input
+                  required
+                  type="text"
+                  placeholder="Name"
+                  minLength={3}
+                  maxLength={15}
+                  value={username}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "field",
+                      fieldName: "username",
+                      payload: e.currentTarget.value,
+                    })
+                  }
+                />
+              </div>
               <small ref={userNameRefLogin}></small>
             </section>
             <section>
-              <input
-                type="password"
-                placeholder="Password"
-                minLength={4}
-                maxLength={15}
-                value={password}
-                onChange={(e) =>
-                  dispatch({
-                    type: "field",
-                    fieldName: "password",
-                    payload: e.currentTarget.value,
-                  })
-                }
-              />
+              <div className="content">
+                <div className="lock">
+                  <div className="fa fa-lock"></div>
+                </div>
+
+                <input
+                  required
+                  ref={passwordInputLogin}
+                  type="password"
+                  placeholder="Password"
+                  maxLength={15}
+                  value={password}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "field",
+                      fieldName: "password",
+                      payload: e.currentTarget.value,
+                    })
+                  }
+                />
+
+                <span className="show-hide">
+                  <i ref={eyeBtnLogin} id="show" className="fa fa-eye" onClick={() => showPasswordHandler(passwordInputLogin, eyeBtnLogin)}></i>
+                </span>
+              </div>
               <small ref={passwordRefLogin}></small>
             </section>
             <button className="submit-btn" type="submit" disabled={isLoading}>
@@ -168,11 +207,14 @@ function App() {
               <span>Forgot password?</span>
               <span
                 onClick={() => {
-                  mainContainer.current.className = "container flip";
-                  signinContainer.current.className = "signin-container flip";
+                  mainContainer.current.classList.add("flip");
+                  signinContainer.current.classList.add("flip");
                   setTimeout(() => {
                     setDisplay({ loginDisplay: "none", signinDisplay: "block" });
                   }, 300);
+                  userNameRefLogin.current.innerText = "";
+                  passwordRefLogin.current.innerText = "";
+                  dispatch({ type: "clearInputs" });
                 }}>
                 Sign in?
               </span>
@@ -188,8 +230,8 @@ function App() {
             <button
               className="logout-btn"
               onClick={() => {
-                mainContainer.current.className = "container";
-                signinContainer.current.className = "signin-container";
+                mainContainer.current.classList.remove("flip");
+                signinContainer.current.classList.remove("flip");
                 setTimeout(() => {
                   dispatch({ type: "logOut" });
                   setDisplay({ loginDisplay: "block", signinDisplay: "none" });
@@ -202,37 +244,54 @@ function App() {
           <form className="form" onSubmit={onRegister}>
             <h1>Signin form:</h1>
             <section>
-              <input
-                type="text"
-                placeholder="Name"
-                minLength={3}
-                maxLength={15}
-                value={username}
-                onChange={(e) =>
-                  dispatch({
-                    type: "field",
-                    fieldName: "username",
-                    payload: e.currentTarget.value,
-                  })
-                }
-              />
+              <div className="content">
+                <div className="pencil">
+                  <div className="fa fa-pencil-alt flip"></div>
+                </div>
+
+                <input
+                  required
+                  type="text"
+                  placeholder="Name"
+                  minLength={3}
+                  maxLength={15}
+                  value={username}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "field",
+                      fieldName: "username",
+                      payload: e.currentTarget.value,
+                    })
+                  }
+                />
+              </div>
               <small ref={userNameRefSignin}></small>
             </section>
             <section>
-              <input
-                type="password"
-                placeholder="Password"
-                minLength={4}
-                maxLength={15}
-                value={password}
-                onChange={(e) =>
-                  dispatch({
-                    type: "field",
-                    fieldName: "password",
-                    payload: e.currentTarget.value,
-                  })
-                }
-              />
+              <div className="content">
+                <div className="lock">
+                  <div className="fa fa-lock"></div>
+                </div>
+
+                <input
+                  required
+                  ref={passwordInputSignin}
+                  type="password"
+                  placeholder="Password"
+                  maxLength={15}
+                  value={password}
+                  onChange={(e) =>
+                    dispatch({
+                      type: "field",
+                      fieldName: "password",
+                      payload: e.currentTarget.value,
+                    })
+                  }
+                />
+                <span className="show-hide">
+                  <i ref={eyeBtnSignin} id="show" className="fa fa-eye" onClick={() => showPasswordHandler(passwordInputSignin, eyeBtnSignin)}></i>
+                </span>
+              </div>
               <small ref={passwordRefSignin}></small>
             </section>
             <button className="submit-btn" type="submit" disabled={isLoading}>
@@ -242,11 +301,14 @@ function App() {
               <span>Have account?</span>
               <span
                 onClick={() => {
-                  mainContainer.current.className = "container";
-                  signinContainer.current.className = "signin-container";
+                  mainContainer.current.classList.remove("flip");
+                  signinContainer.current.classList.remove("flip");
                   setTimeout(() => {
                     setDisplay({ loginDisplay: "block", signinDisplay: "none" });
                   }, 300);
+                  userNameRefSignin.current.innerText = "";
+                  passwordRefSignin.current.innerText = "";
+                  dispatch({ type: "clearInputs" });
                 }}>
                 Log in?
               </span>
