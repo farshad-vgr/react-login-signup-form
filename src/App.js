@@ -61,17 +61,17 @@ function loginReducer(state, { type, fieldName, payload }) {
 
 function App() {
   const mainContainer = useRef();
-  const signinContainer = useRef();
+  const signupContainer = useRef();
   const userNameRefLogin = useRef();
   const passwordRefLogin = useRef();
-  const userNameRefSignin = useRef();
-  const passwordRefSignin = useRef();
+  const userNameRefSignup = useRef();
+  const passwordRefSignup = useRef();
   const passwordInputLogin = useRef();
   const eyeBtnLogin = useRef();
-  const passwordInputSignin = useRef();
-  const eyeBtnSignin = useRef();
-  const [display, setDisplay] = useState({ loginDisplay: "block", signinDisplay: "none" });
-  const { loginDisplay, signinDisplay } = display;
+  const passwordInputSignup = useRef();
+  const eyeBtnSignup = useRef();
+  const [display, setDisplay] = useState({ loginDisplay: "block", signupDisplay: "none" });
+  const { loginDisplay, signupDisplay } = display;
   const [state, dispatch] = useReducer(loginReducer, initialState);
   const { username, password, isLoading, error, isLoggedIn } = state;
 
@@ -107,15 +107,15 @@ function App() {
     setTimeout(() => {
       if (username.trim() === "") {
         dispatch({ type: "error" });
-        userNameRefSignin.current.innerText = "Enter your name!";
+        userNameRefSignup.current.innerText = "Enter your name!";
       } else if (password.trim() === "") {
         dispatch({ type: "error" });
-        userNameRefSignin.current.innerText = "";
-        passwordRefSignin.current.innerText = "Enter your password!";
+        userNameRefSignup.current.innerText = "";
+        passwordRefSignup.current.innerText = "Enter your password!";
       } else {
         dispatch({ type: "success" });
-        userNameRefSignin.current.innerText = "";
-        passwordRefSignin.current.innerText = "";
+        userNameRefSignup.current.innerText = "";
+        passwordRefSignup.current.innerText = "";
       }
     }, 1000);
   };
@@ -140,7 +140,7 @@ function App() {
               className="logout-btn"
               onClick={() => {
                 dispatch({ type: "logOut" });
-                setDisplay({ loginDisplay: "block", signinDisplay: "none" });
+                setDisplay({ loginDisplay: "block", signupDisplay: "none" });
               }}>
               Log Out
             </button>
@@ -208,22 +208,22 @@ function App() {
               <span
                 onClick={() => {
                   mainContainer.current.classList.add("flip");
-                  signinContainer.current.classList.add("flip");
+                  signupContainer.current.classList.add("flip");
                   setTimeout(() => {
-                    setDisplay({ loginDisplay: "none", signinDisplay: "block" });
+                    setDisplay({ loginDisplay: "none", signupDisplay: "block" });
                   }, 300);
                   userNameRefLogin.current.innerText = "";
                   passwordRefLogin.current.innerText = "";
                   dispatch({ type: "clearInputs" });
                 }}>
-                Sign in?
+                Sign up?
               </span>
             </section>
           </form>
         )}
       </section>
 
-      <section ref={signinContainer} className="signin-container" style={{ display: signinDisplay }}>
+      <section ref={signupContainer} className="signup-container" style={{ display: signupDisplay }}>
         {isLoggedIn ? (
           <article className="logout">
             <h2>Registered {username}!</h2>
@@ -231,10 +231,10 @@ function App() {
               className="logout-btn"
               onClick={() => {
                 mainContainer.current.classList.remove("flip");
-                signinContainer.current.classList.remove("flip");
+                signupContainer.current.classList.remove("flip");
                 setTimeout(() => {
                   dispatch({ type: "logOut" });
-                  setDisplay({ loginDisplay: "block", signinDisplay: "none" });
+                  setDisplay({ loginDisplay: "block", signupDisplay: "none" });
                 }, 300);
               }}>
               Log Out
@@ -242,7 +242,7 @@ function App() {
           </article>
         ) : (
           <form className="form" onSubmit={onRegister}>
-            <h1>Signin form:</h1>
+            <h1>Signup form:</h1>
             <section>
               <div className="content">
                 <div className="pencil">
@@ -265,7 +265,7 @@ function App() {
                   }
                 />
               </div>
-              <small ref={userNameRefSignin}></small>
+              <small ref={userNameRefSignup}></small>
             </section>
             <section>
               <div className="content">
@@ -275,7 +275,7 @@ function App() {
 
                 <input
                   required
-                  ref={passwordInputSignin}
+                  ref={passwordInputSignup}
                   type="password"
                   placeholder="Password"
                   maxLength={15}
@@ -289,25 +289,25 @@ function App() {
                   }
                 />
                 <span className="show-hide">
-                  <i ref={eyeBtnSignin} id="show" className="fa fa-eye" onClick={() => showPasswordHandler(passwordInputSignin, eyeBtnSignin)}></i>
+                  <i ref={eyeBtnSignup} id="show" className="fa fa-eye" onClick={() => showPasswordHandler(passwordInputSignup, eyeBtnSignup)}></i>
                 </span>
               </div>
-              <small ref={passwordRefSignin}></small>
+              <small ref={passwordRefSignup}></small>
             </section>
             <button className="submit-btn" type="submit" disabled={isLoading}>
-              {isLoading ? "Signning in..." : "Sign In"}
+              {isLoading ? "Signning up..." : "Sign Up"}
             </button>
             <section className="login-options">
               <span>Have account?</span>
               <span
                 onClick={() => {
                   mainContainer.current.classList.remove("flip");
-                  signinContainer.current.classList.remove("flip");
+                  signupContainer.current.classList.remove("flip");
                   setTimeout(() => {
-                    setDisplay({ loginDisplay: "block", signinDisplay: "none" });
+                    setDisplay({ loginDisplay: "block", signupDisplay: "none" });
                   }, 300);
-                  userNameRefSignin.current.innerText = "";
-                  passwordRefSignin.current.innerText = "";
+                  userNameRefSignup.current.innerText = "";
+                  passwordRefSignup.current.innerText = "";
                   dispatch({ type: "clearInputs" });
                 }}>
                 Log in?
